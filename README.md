@@ -145,6 +145,7 @@ Choose a DNS service, either from the Domain Name Registrar you used, or a separ
 [DNS Made Easy](https://dnsmadeeasy.com), and use their [Mail Server Forwarding Service](https://dnsmadeeasy.com/services/mailservices/) for a dynamic IP address. Later, configure `ddclient` to detect and 
 automatically update server IP address changes with the DNS provider.
 
+Check your domain for proper configuration (`A` records, `MX` records) and its appearance on any blacklists using tools like [MXToolbox](http://mxtoolbox.com/blacklists.aspx).
 
 #### SPF
 
@@ -154,7 +155,7 @@ dig @8.8.4.4 domainname.com any
 ```
 > `v=spf1 a mx +include:comcast.net -all`
 
-There is an SPF `TXT record added for each email domain that has a DNS `a` and `MX` record.
+There is an SPF `TXT` record added for each email domain that has a DNS `a` and `MX` record.
 
 #### DKIM
 
@@ -570,4 +571,12 @@ sudo -u admin dscl localhost -read /LDAPv3/127.0.0.1/Users/vpn_0123456789ab
 
 See the repo [macOS OpenVPN Server](https://github.com/essandess/macos-openvpn-server).
 
+
 ## Mail
+
+This section roughly follows these BSD- and Linix-based notes:
+  * https://www.c0ffee.net/blog/mail-server-guide/
+  * https://arstechnica.com/information-technology/2014/02/how-to-run-your-own-e-mail-server-with-your-own-domain-part-1/
+  * http://www.purplehat.org/?page_id=4
+  
+Specific configuration choices (e.g. spamassassin versus rspamd) will be made along the way.
