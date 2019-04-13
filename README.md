@@ -574,7 +574,7 @@ See the repo [macOS OpenVPN Server](https://github.com/essandess/macos-openvpn-s
 
 ## Mail
 
-This section roughly follows these BSD- and Linix-based notes:
+This section roughly follows these BSD- and Linux-based notes:
   * https://www.c0ffee.net/blog/mail-server-guide/
   * https://arstechnica.com/information-technology/2014/02/how-to-run-your-own-e-mail-server-with-your-own-domain-part-1/
   * http://www.purplehat.org/?page_id=4
