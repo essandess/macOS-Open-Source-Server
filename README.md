@@ -48,7 +48,7 @@ organized from each of the disassembly stages. See these [instructional](https:/
 These services will run well on any old Mac desktop configured with a suffient processor and memory, including my old
 2012 Mac Mini server model.
 
-Like those old Mac server's I'll call the base hard drive in these notes `Server HD` (not `Macintosh HD`).
+Like those old Mac servers, I'll call the base hard drive in these notes `Server HD` (not `Macintosh HD`).
 
 
 ## Server.app v. 5.7 Backup
@@ -62,6 +62,7 @@ New server:
 sudo mkdir -p /Library/Server_v57/Server\ HD/Applications
 sudo rsync -a -e 'ssh -l admin' admin@old-server:/Applications/Server.app /Library/Server_v57/Server\ HD/Applications/
 ```
+
 
 ## SSH
 
@@ -90,6 +91,7 @@ diff /etc/ssh/sshd_config.orig /etc/ssh/sshd_config
 ```
 
 Copy `~/.ssh/id_ed25519.pub` to `~/.ssh/authorized_keys` on other hosts.
+
 
 ## Macports migration
 
@@ -121,6 +123,7 @@ Use `bzip2` for compression:
 > 
 ```
 
+
 ## Server.app 
 
 Install and turn on **Profile Manager** and **Open Directory**.
@@ -129,8 +132,30 @@ Install and turn on **Profile Manager** and **Open Directory**.
 ## Domain Name
 
 ### Domain Name Registration
+
+Purchase a domain name from your favorite registrar. Personally, I really like [NameCheap](https://www.namecheap.com). These 
+notes will configure this domain with a "split horizon," so that the domain is bound to an external IP address on the open 
+internet by the DNS provider of your choice, and an internal LAN IP address by the [DNS service](#dns) on the server. That 
+way, devices will connect with the server via rouer port forwarding while on the outside internet, and directly and securely 
+over the LAN while at home or through a VPN tunnel.
+
 ### Domain Name DNS Configuration
+
+Choose a DNS service, either from the Domain Name Registrar you used, or a separate provider. There are [security considerations](https://arstechnica.com/information-technology/2014/02/how-to-run-your-own-e-mail-server-with-your-own-domain-part-1/) for using the domain name registrar as the domain's DNS provider.  Personally, I like
+[DNS Made Easy](https://dnsmadeeasy.com), and use their [Mail Server Forwarding Service](https://dnsmadeeasy.com/services/mailservices/) for a dynamic IP address. Later, configure `ddclient` to detect and 
+automatically update server IP address changes with the DNS provider.
+
+
 #### SPF
+
+Add an SPF `TXT` record to your DNS configuration that tells email MTA's the valid domains that may send email from your domain. Personally, I use an ISP Mail Relay, so my SPF records look like:
+```
+dig @8.8.4.4 domainname.com any
+```
+> `v=spf1 a mx +include:comcast.net -all`
+
+There is an SPF `TXT record added for each email domain that has a DNS `a` and `MX` record.
+
 #### DKIM
 
 
