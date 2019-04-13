@@ -155,7 +155,7 @@ dig @8.8.4.4 domainname.com any
 ```
 > `v=spf1 a mx +include:comcast.net -all`
 
-There is an SPF `TXT` record added for each email domain that has a DNS `a` and `MX` record.
+There is an SPF `TXT` record added for each email domain that has a DNS `A` and `MX` record.
 
 #### DKIM
 
