@@ -586,3 +586,29 @@ This section roughly follows these BSD- and Linux-based notes:
   * http://www.purplehat.org/?page_id=4
   
 Specific configuration choices (e.g. spamassassin versus rspamd) will be made along the way.
+
+### Copy the previous Server.app's Mail configuration
+
+
+Old server:
+```
+( cd /Library/Server ; sudo tar cfpj ~/Downloads/Mail_Config.tbz ./Mail/Config )
+scp ~/Downloads/Mail_Config.tbz admin@new-server:~/Downloads
+```
+
+New server:
+```
+( cd /Library/Server_v57 ; sudo tar xfpj ~/Downloads/Mail_Config.tbz )
+```
+
+Keep a copy of the old server's `serveradmin` Mail settings (compressed and encrypted):
+
+Old server:
+```
+sudo serveradmin -x set mail | bzip2 -c > ~/Downloads/serveradmin_v57_mail.plist.bz2.gpg
+gpg -ac ~/Downloads/serveradmin_v57_mail.plist.bz2
+sudo chown admin:admin ~/Downloads/serveradmin_v57_mail.plist.bz2.asc
+sudo chmod 640 ~/Downloads/serveradmin_v57_mail.plist.bz2.asc
+scp -p ~/Downloads/serveradmin_v57_mail.plist.bz2.asc admin@new-server:~/Downloads
+rm ~/Downloads/serveradmin_v57_mail.plist.bz2 ~/Downloads/serveradmin_v57_mail.plist.bz2.asc
+```
