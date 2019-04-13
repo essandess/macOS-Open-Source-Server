@@ -512,11 +512,11 @@ Old server Server.app v.5.7:
 Server.app v5.7>Users>Local Network Users, View: Show System Accounts
 Highlight "VPN MPPE Key Access User"
 Gear icon on bottom>Export Users…
-Save As: ~/Downloads/vpn_0213456789ab.txt
+Save As: ~/Downloads/vpn_0123456789ab.txt
 ```
 
 ```
-scp -p ~/Downloads/vpn_0213456789ab.txt admin@new-server:~/Downloads
+scp -p ~/Downloads/vpn_0123456789ab.txt admin@new-server:~/Downloads
 ```
 
 New server Server.app v.5.8:
@@ -524,17 +524,18 @@ New server Server.app v.5.8:
 ```
 Server.app v5.8>Users>Local Network Users, View: Show System Accounts
 Gear icon on bottom>Import Users…> Local Network Directory
+System Preferences>Sharing>Remote Login> Allow access for: Remove account "VPN MPPE Key Access User"
 ```
 
 ```
-sudo security add-generic-password -a vpn_0213456789ab -s com.apple.ras -U -p "vpn_0213456789ab's password" /Library/Keychains/System.keychain
+sudo security add-generic-password -a vpn_0123456789ab -s com.apple.ras -U -p "vpn_0123456789ab's password" /Library/Keychains/System.keychain
 sudo security add-generic-password -a com.apple.ppp.l2tp -s com.apple.net.racoon -T /usr/sbin/racoon -p "SHARED-SECRET-PHRASE" /Library/Keychains/System.keychain
 ```
 
 New server Keychain Access.app:
 ```
 Keychain Access.app>Keychains: System, Category: All Items, Search for "com.apple.ras", double-click, check "Show password"
-Add a new, strong password to the account vpn_0213456789ab (not the initial template from above)
+Add a new, strong password to the account vpn_0123456789ab (not the initial template from above)
 Keychain Access.app>Keychains: System, Category: All Items, Search for "com.apple.net.racoon", double-click, check "Show password"
 Add a new, very, very strong random PSK to the account com.apple.ppp.l2tp (not the initial template from above)
 ```
@@ -544,7 +545,7 @@ New server Server.app v.5.8:
 Server.app v5.8>Users>Local Network Users, View: Show System Accounts
 Highlight "VPN MPPE Key Access User"
 Gear icon on bottom>Change Password…
-Use the exact same strong password as entered into the Keychain Access.app for account vpn_0213456789ab above.
+Use the exact same strong password as entered into the Keychain Access.app for account vpn_0123456789ab above.
 ```
 
 New server:
