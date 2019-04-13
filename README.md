@@ -605,7 +605,7 @@ Keep a copy of the old server's `serveradmin` Mail settings (compressed and encr
 
 Old server:
 ```
-sudo serveradmin -x set mail | bzip2 -c > ~/Downloads/serveradmin_v57_mail.plist.bz2.gpg
+sudo serveradmin -x set mail | bzip2 -c > ~/Downloads/serveradmin_v57_mail.plist.bz2
 gpg -ac ~/Downloads/serveradmin_v57_mail.plist.bz2
 sudo chown admin:admin ~/Downloads/serveradmin_v57_mail.plist.bz2.asc
 sudo chmod 640 ~/Downloads/serveradmin_v57_mail.plist.bz2.asc
