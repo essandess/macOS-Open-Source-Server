@@ -532,6 +532,8 @@ sudo security add-generic-password -a vpn_0123456789ab -s com.apple.ras -U -p "v
 sudo security add-generic-password -a com.apple.ppp.l2tp -s com.apple.net.racoon -T /usr/sbin/racoon -p "SHARED-SECRET-PHRASE" /Library/Keychains/System.keychain
 ```
 
+**Important:** ***Change this template password and PSK for these accounts using Keychain Access.app in the next step.***
+
 New server Keychain Access.app:
 ```
 Keychain Access.app>Keychains: System, Category: All Items, Search for "com.apple.ras", double-click, check "Show password"
