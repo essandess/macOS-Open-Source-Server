@@ -145,7 +145,10 @@ Choose a DNS service, either from the Domain Name Registrar you used, or a separ
 [DNS Made Easy](https://dnsmadeeasy.com), and use their [Mail Server Forwarding Service](https://dnsmadeeasy.com/services/mailservices/) for a dynamic IP address. Later, configure `ddclient` to detect and 
 automatically update server IP address changes with the DNS provider.
 
-Check your domain for proper configuration (`A` records, `MX` records) and its appearance on any blacklists using tools like [MXToolbox](http://mxtoolbox.com/blacklists.aspx).
+Check your domain for proper configuration (`A` records, `MX` records) and its appearance on any blacklists using tools like 
+[MXToolbox](http://mxtoolbox.com/) for things like [blacklist lookup](http://mxtoolbox.com/blacklists.aspx),
+[SPF lookup](https://mxtoolbox.com/spf.aspx), and [DKIM lookup](https://mxtoolbox.com/dkim.aspx), useful for checking the
+[SPF record](#spf) and [DKIM record](#dkim) you're about to enter.
 
 #### SPF
 
