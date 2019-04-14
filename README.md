@@ -580,6 +580,13 @@ See the repo [macOS OpenVPN Server](https://github.com/essandess/macos-openvpn-s
 
 ## Mail
 
+Build a modern BSD-based mail server for macOS. This is planned to be a Frankenstein creation using modern BSD tools, 
+integrated with Apple's latest Server.app with **Open Directory** certificate creation/management, the ability to deploy 
+credentials using the **Profile Manager** MDM, and using, for as long as it or this Apple service lives, an old macOS 
+Server.app v.5.7 to
+[generate APNS Mail/Calendar/Address APNS certificates](https://github.com/st3fan/dovecot-xaps-daemon/issues/46) for push 
+notifications on mobile devices. Except for APNS, there are good, viable alternatives to all these tools.
+
 This section roughly follows these BSD- and Linux-based notes:
   * https://www.c0ffee.net/blog/mail-server-guide/
   * https://arstechnica.com/information-technology/2014/02/how-to-run-your-own-e-mail-server-with-your-own-domain-part-1/
