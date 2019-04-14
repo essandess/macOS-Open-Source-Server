@@ -586,8 +586,8 @@ This section roughly follows these BSD- and Linux-based notes:
   * http://www.purplehat.org/?page_id=4
 
 Specific configuration choices (e.g. amavisd+spamassassin versus rspamd) will be made along the way. It appears that rspamd is 
-the tool of choice now, both for technology and the love it gets         online. The initinitial run-through will use rspamd, 
-expecting the follow [c0ffee.net](https://www.c0ffee.net/blog/mail-server-guide/)'s OpenDNS guide pretty closely for macOS.
+the tool of choice now, both for technology and the love it get online. The initinitial run-through will use rspamd, 
+expecting the follow [c0ffee.net](https://www.c0ffee.net/blog/mail-server-guide/)'s FreeBSD guide pretty closely for macOS.
 
 ### Copy the previous Server.app's Mail configuration
 
