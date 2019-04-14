@@ -584,8 +584,10 @@ This section roughly follows these BSD- and Linux-based notes:
   * https://www.c0ffee.net/blog/mail-server-guide/
   * https://arstechnica.com/information-technology/2014/02/how-to-run-your-own-e-mail-server-with-your-own-domain-part-1/
   * http://www.purplehat.org/?page_id=4
-  
-Specific configuration choices (e.g. spamassassin versus rspamd) will be made along the way.
+
+Specific configuration choices (e.g. amavisd+spamassassin versus rspamd) will be made along the way. It appears that rspamd is 
+the tool of choice now, both for technology and the love it gets         online. The initinitial run-through will use rspamd, 
+expecting the follow [c0ffee.net](https://www.c0ffee.net/blog/mail-server-guide/)'s OpenDNS guide pretty closely for macOS.
 
 ### Copy the previous Server.app's Mail configuration
 
@@ -612,3 +614,37 @@ sudo chmod 640 ~/Downloads/serveradmin_v57_mail.plist.bz2.asc
 scp -p ~/Downloads/serveradmin_v57_mail.plist.bz2.asc admin@new-server:~/Downloads
 rm ~/Downloads/serveradmin_v57_mail.plist.bz2 ~/Downloads/serveradmin_v57_mail.plist.bz2.asc
 ```
+
+### Mail server installation steps
+
+#### Install Postfix
+
+#### LDAP configuration
+
+#### Junkmail and Notjunkmail accounts?
+
+#### Install Dovecot, perhaps dovecot-pigeonhole
+
+#### LDAP Auth mechanism?
+
+#### Install solr or some other indexing
+
+#### Install rspamd, compare to other installs; what did macOS Server use? spamassassin
+
+#### Install redis for rspamd
+
+#### Configure postfix and Dovecot to worth with the milter
+
+#### Configure DKIM in postfix and the DNS records
+
+#### Test DKIM, DMARC, SPF
+
+#### Create user-specific sieve scripts
+
+#### Install APNS configuration using Server.app v5.7 certs
+
+#### Install mailman
+
+#### Make sure that this configuration works with Notes
+
+#### Create S/MIME certs
