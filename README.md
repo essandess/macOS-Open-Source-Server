@@ -531,7 +531,7 @@ System Preferences>Sharing>Remote Login> Allow access for: Remove account "VPN M
 ```
 
 ```
-sudo security add-generic-password -a vpn_0123456789ab -s com.apple.ras -U -p "vpn_0123456789ab's password" /Library/Keychains/System.keychain
+sudo security add-generic-password -a vpn_0123456789ab -s com.apple.ras -p "vpn_0123456789ab's password" /Library/Keychains/System.keychain
 sudo security add-generic-password -a com.apple.ppp.l2tp -s com.apple.net.racoon -T /usr/sbin/racoon -p "SHARED-SECRET-PHRASE" /Library/Keychains/System.keychain
 ```
 
