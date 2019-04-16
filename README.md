@@ -589,6 +589,8 @@ notifications on mobile devices. Except for APNS, there are good, viable alterna
 
 This section roughly follows these BSD- and Linux-based notes:
   * https://www.c0ffee.net/blog/mail-server-guide/
+  * https://rspamd.com/doc/quickstart.html
+  * https://thomas-leister.de/en/mailserver-debian-stretch/
   * https://arstechnica.com/information-technology/2014/02/how-to-run-your-own-e-mail-server-with-your-own-domain-part-1/
   * http://www.purplehat.org/?page_id=4
 
@@ -597,7 +599,6 @@ the tool of choice now, both for technology and the love it gets online. The ini
 expecting the follow [c0ffee.net](https://www.c0ffee.net/blog/mail-server-guide/)'s FreeBSD guide pretty closely for macOS.
 
 ### Copy the previous Server.app's Mail configuration
-
 
 Old server:
 ```
@@ -625,6 +626,19 @@ rm ~/Downloads/serveradmin_v57_mail.plist.bz2 ~/Downloads/serveradmin_v57_mail.p
 ### Mail server installation steps
 
 #### Install Postfix
+
+```
+port search postfix
+port variants postfix
+sudo port -pN install postfix +dovecot_sasl +ldap +pcre +postgresql96 +sasl +smtputf8 +tls
+port notes postfix
+```
+
+Turn of macOS's native `postfix` MTA. I'll leave its `com.apple.postfix.newaliases` daemon running, which watches `/etc/aliases`:
+```
+sudo launchctl list | grep postfix
+sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.postfix.master.plist
+```
 
 #### LDAP configuration
 
