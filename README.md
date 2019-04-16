@@ -663,7 +663,8 @@ which postfix
 
 Checking and debugging after every few parameter changes.
 ```
-sudo bash -c 'postfix reload ; nmap -p 25 localhost ; lsof -i ":25" ; postfix status ; postfix check'
+man 5 postconf
+sudo bash -c 'postfix reload ; sleep 1 ; nmap -p 25 localhost ; lsof -i ":25" ; postfix status ; postfix check'
 ```
 
 
