@@ -625,7 +625,7 @@ rm ~/Downloads/serveradmin_v57_mail.plist.bz2 ~/Downloads/serveradmin_v57_mail.p
 
 ### Mail server installation steps
 
-#### Install Postfix
+#### Install `postfix`
 
 ```
 port search postfix
@@ -643,11 +643,29 @@ sudo launchctl list | grep postfix
 # sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.postfix.master.plist
 ```
 
-Configure `postfix`:
+#### Configure `postfix`
+
+Configure `postfix` with an amalgam of modern BSD mail capabilities that also uses the latest Server.app's certificates and 
+**Open Directory** LDAP authentication. Also configure the web-based configuration and monitoring tools to us
+**Profile Manager**'s Apache web server as decribed above in the [Web](#web) section.
+
+Postfix configuration, though powerful and comprehensive, is also Byzantine and error-prone. The best approach is to build the 
+foundations step-by-step, changing up to three parameters each time, and reloading to make sure that everything is running 
+correctly.
+
 ```
 sudo cp -p /opt/local/etc/postfix/main.cf /opt/local/etc/postfix/main.cf.orig
 sudo vi /opt/local/etc/postfix/main.cf
+sudo port load postfix
+# Make sure that PATH points to Macports `/opt/local/sbin/postfix`, not the native macOS `postfix` binary
+which postfix
 ```
+
+Checking and debugging after every few parameter changes.
+```
+sudo bash -c 'nmap -p 25 localhost ; lsof -i ":25" ; postfix status ; postfix check'
+```
+
 
 #### LDAP configuration
 
