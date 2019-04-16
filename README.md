@@ -643,6 +643,12 @@ sudo launchctl list | grep postfix
 # sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.postfix.master.plist
 ```
 
+Configure `postfix`:
+```
+sudo cp -p /opt/local/etc/postfix/main.cf /opt/local/etc/postfix/main.cf.orig
+sudo vi /opt/local/etc/postfix/main.cf
+```
+
 #### LDAP configuration
 
 #### Junkmail and Notjunkmail accounts?
