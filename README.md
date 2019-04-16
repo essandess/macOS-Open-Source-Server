@@ -634,10 +634,13 @@ sudo port -pN install postfix +dovecot_sasl +ldap +pcre +postgresql96 +sasl +smt
 port notes postfix
 ```
 
-Turn of macOS's native `postfix` MTA. I'll leave its `com.apple.postfix.newaliases` daemon running, which watches `/etc/aliases`:
+Turn of macOS's native `postfix` MTA, if it's running. Leave its 
+`com.apple.postfix.master` (`man 8 master`) and `com.apple.postfix.newaliases` (`man newaliases`) daemons running, which in any event to turn off would require an 
+unnecessary cycle of `scrutil disable`, `scrutil enable` in Recovery Mode to handle the SIP protections on these plists:
 ```
 sudo launchctl list | grep postfix
-sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.postfix.master.plist
+# Don't do this, which SIP will prevent anyway:
+# sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.postfix.master.plist
 ```
 
 #### LDAP configuration
