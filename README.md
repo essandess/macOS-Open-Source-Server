@@ -625,7 +625,9 @@ rm ~/Downloads/serveradmin_v57_mail.plist.bz2 ~/Downloads/serveradmin_v57_mail.p
 
 ### Mail server installation steps
 
-#### Install `postfix`
+#### `postfix`
+
+##### Install `postfix`
 
 ```
 port search postfix
@@ -643,7 +645,7 @@ sudo launchctl list | grep postfix
 # sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.postfix.master.plist
 ```
 
-#### Configure `postfix`
+##### Configure `postfix`
 
 Configure `postfix` with an amalgam of modern BSD mail capabilities that also uses the latest Server.app's certificates and 
 **Open Directory** LDAP authentication. Also configure the web-based configuration and monitoring tools to us
@@ -653,6 +655,8 @@ Postfix configuration, though powerful and comprehensive, is also Byzantine and 
 foundations step-by-step, changing up to three parameters each time, and reloading to make sure that everything is running 
 correctly.
 
+At the end of this section, a sucecssful `postfix` configuration will be able to send email using a simple `sendmail` test.
+
 ```
 sudo cp -p /opt/local/etc/postfix/main.cf /opt/local/etc/postfix/main.cf.orig
 sudo vi /opt/local/etc/postfix/main.cf
@@ -661,12 +665,61 @@ sudo port load postfix
 which postfix
 ```
 
+Create these directories and files, with appropriate permissions:
+```
+# Logging
+sudo mkdir /opt/local/var/log/mail
+sudo chmod go-rwx /opt/local/var/log/mail
+
+# Create /opt/local/etc/postfix/sasl/passwd, passwd.db with secure permissions
+sudo rsync -a /Library/Server_v57/Mail/Config/postfix/sasl /opt/local/etc/postfix
+sudo newaliases
+sudo -u _postfix openssl dhparam -out /opt/local/var/lib/postfix/dh2048.pem 2048
+
+# TLS authentication of mail relays (using Comcast as ISP example)
+openssl s_client -showcerts -servername smtp.comcast.net -connect smtp.comcast.net:587  -starttls smtp < /dev/null > smtp_comcast_net.pem
+# For smtp_tls_CAfile:
+vi smtp_comcast_net.pem  # delete non-certificate outputs before 1st --- and after last ---
+# For smtp_tls_CApath:
+# break into three (or the necessary trust chain #) of .crt files delineated by
+# '-----BEGIN CERTIFICATE-----'
+sudo mkdir -p /opt/local/etc/postfix/etc/certificates
+sudo cp smtp_comcast_net.pem [*.crt] /opt/local/etc/postfix/etc/certificates
+sudo chgrp -R _postfix /opt/local/etc/postfix/etc
+
+# SASL authentication for mail relays
+sudo mkdir /opt/local/etc/postfix/sasl
+sudo vi /opt/local/etc/postfix/sasl/passwd
+sudo chgrp -R _postfix /opt/local/etc/postfix/sasl
+sudo chmod -R o-rwx /opt/local/etc/postfix/sasl
+sudo postmap /opt/local/etc/postfix/sasl/passwd
+```
+
 Checking and debugging after every few parameter changes.
 ```
 man 5 postconf
+sudo vi /opt/local/etc/postfix/main.cf
 sudo bash -c 'postfix reload ; sleep 1 ; nmap -p 25 localhost ; lsof -i ":25" ; postfix status ; postfix check'
+sendmail -t < ~/mail.txt
+sudo less /opt/local/var/log/mail/postfix.log
+mailq
+# For `sendmail -v` without dovecot set up:
+sudo postsuper -d ALL
 ```
 
+`mail.txt`
+```
+To: me@isp.net
+Subject: postfix configuration test
+From: admin@domain.tld
+
+My first SMTP email test.
+```
+
+#### `dovecot`
+
+##### Install `dovecot`
+##### Configure `dovecot`
 
 #### LDAP configuration
 
