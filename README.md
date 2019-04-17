@@ -671,9 +671,10 @@ Create these directories and files, with appropriate permissions:
 sudo mkdir /opt/local/var/log/mail
 sudo chmod go-rwx /opt/local/var/log/mail
 
-# Create /opt/local/etc/postfix/sasl/passwd, passwd.db with secure permissions
-sudo rsync -a /Library/Server_v57/Mail/Config/postfix/sasl /opt/local/etc/postfix
+# Aliases
 sudo newaliases
+
+# Create your own Diffie-Hellman parameters for TLS Forward Secrecy
 sudo -u _postfix openssl dhparam -out /opt/local/var/lib/postfix/dh2048.pem 2048
 
 # TLS authentication of mail relays (using Comcast as ISP example)
