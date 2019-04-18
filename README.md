@@ -720,6 +720,14 @@ My first SMTP email test.
 #### `dovecot`
 
 ##### Install `dovecot`
+```
+sudo port -pN install dovecot2 +ldap +lucene +solr +postgresql92
+sudo port -pN install dovecot2-antispam dovecot2-sieve
+```
+
+Note the inconsistency of PostgreSQL versions with `postfix` above. I'm adding the SQL variant "just in case" I need to use 
+such a database, and will go back and fix later if this necessity arises.
+
 ##### Configure `dovecot`
 
 #### LDAP configuration
