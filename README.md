@@ -10,7 +10,7 @@ versions of services traditionally included in the old Server.app, but with a us
 The general approach here will be to migrate Server.app v. 5.7 configurations into either open source services, or native 
 macOS services if such exist. I will use Server.app v. 5.8's Open Directory for authentication, but this is not necessary.
 
-These notes use [MacPorts](https://www.macports.org). It is also easy to use [Homebrew](https://brew.sh).
+These notes use [MacPorts](https://www.macports.org). It is also easy to use [Homebrew](https://brew.sh), like this [repo](../../../../taniguti/Services_on_macOS).
 
 Table of Contents
 =================
