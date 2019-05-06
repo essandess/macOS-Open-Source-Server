@@ -580,23 +580,22 @@ See the repo [macOS OpenVPN Server](https://github.com/essandess/macos-openvpn-s
 
 ## Mail
 
-Build a modern BSD-based mail server for macOS. This is planned to be a Frankenstein creation using modern BSD tools, 
-integrated with Apple's latest Server.app with **Open Directory** certificate creation/management, the ability to deploy 
-credentials using the **Profile Manager** MDM, and using, for as long as it or this Apple service lives, an old macOS 
-Server.app v.5.7 to
+Build a modern BSD-based mail server for macOS using a postfix+dovecot+solr+rspamd stack. This will integrate modern BSD 
+tools, PAM authentication on macOS, with the option of using Apple's latest Server.app with **Open Directory** certificate 
+creation/management, the ability to deploy credentials using the **Profile Manager** MDM, and using, for as long as it or this 
+Apple service lives, an old macOS Server.app v.5.7 to
 [generate APNS Mail/Calendar/Address APNS certificates](https://github.com/st3fan/dovecot-xaps-daemon/issues/46) for push 
 notifications on mobile devices. Except for APNS, there are good, viable alternatives to all these tools.
 
 This section roughly follows these BSD- and Linux-based notes:
+  * *The Book of Postfix*, http://www.postfix.org/documentation.html
+  * https://wiki.dovecot.org
+  * https://www.rspamd.com/doc/index.html
   * https://www.c0ffee.net/blog/mail-server-guide/
   * https://rspamd.com/doc/quickstart.html
   * https://thomas-leister.de/en/mailserver-debian-stretch/
   * https://arstechnica.com/information-technology/2014/02/how-to-run-your-own-e-mail-server-with-your-own-domain-part-1/
   * http://www.purplehat.org/?page_id=4
-
-Specific configuration choices (e.g. amavisd+spamassassin versus rspamd) will be made along the way. It appears that rspamd is 
-the tool of choice now, both for technology and the love it gets online. The initial run-through will use rspamd, 
-expecting the follow [c0ffee.net](https://www.c0ffee.net/blog/mail-server-guide/)'s FreeBSD guide pretty closely for macOS.
 
 ### Copy the previous Server.app's Mail configuration
 
@@ -717,12 +716,19 @@ From: admin@domain.tld
 My first SMTP email test.
 ```
 
+Run postfix in chroot and re-test.
+
+Site-specific configuration details will appear in the `/opt/local/etc/postfix` directory.
+
+Add `rspamd` as a milter.
+
 #### `dovecot`
 
 ##### Install `dovecot`
 ```
 sudo port -pN install dovecot2 +ldap +lucene +solr +postgresql92
 sudo port -pN install dovecot2-antispam dovecot2-sieve
+sudo port -pN install apache-solr8
 ```
 
 Note the inconsistency of PostgreSQL versions with `postfix` above. I'm adding the SQL variant "just in case" I need to use 
@@ -730,23 +736,32 @@ such a database, and will go back and fix later if this necessity arises.
 
 ##### Configure `dovecot`
 
-#### LDAP configuration
+Site-specific configuration details will appear in the `/opt/local/etc/dovecot/conf.d` directory.
+* PAM, Kerberos, automated full-text search via Solr, automated spam.ham junkmail training.
 
-#### Junkmail and Notjunkmail accounts?
+#### `clamav`
 
-#### Install Dovecot, perhaps dovecot-pigeonhole
+Install and configure `clamav` using the [macOS-clamAV](../macOS-clamAV) repo.
 
-#### LDAP Auth mechanism?
+#### `rspamd`
+##### Install `rspamd`
+```
+sudo port -pN install rspamd dcc
+```
 
-#### Install solr or some other indexing
+##### Configure `rspamd`
 
-#### Install rspamd, compare to other installs; what did macOS Server use? spamassassin
-
-#### Install redis for rspamd
-
-#### Configure postfix and Dovecot to worth with the milter
+Site-specific configuration details will appear in the `/opt/local/etc/rspamd/local.d` directory.
+* Redis, ClamAV, postfix milter (within chroot)
 
 #### Configure DKIM in postfix and the DNS records
+
+```
+sudo mkdir /opt/local/var/lib/rspamd/dkim
+sudo chown _rspamd:_rspamd /opt/local/var/lib/rspamd/dkim
+sudo chmod 0750 /opt/local/var/lib/rspamd/dkim
+sudo -u _rspamd rspamadm dkim_keygen -k /opt/local/var/lib/rspamd/dkim/domain.tld.dkim.key -s dkim -t ed25519 -d domain.tld
+```
 
 #### Test DKIM, DMARC, SPF
 
