@@ -36,6 +36,7 @@ Table of Contents
   * [VPN (macOS `vpnd`, L2TP-IPSec-PSK)](#vpn-macos-vpnd-l2tp-ipsec-psk)
   * [OpenVPN](#openvpn)
   * [Mail](#mail)
+  * [Calendar and Contacts](#calendar-and-contacts)
 
 
 ## Hardware
@@ -774,3 +775,166 @@ sudo -u _rspamd rspamadm dkim_keygen -k /opt/local/var/lib/rspamd/dkim/domain.tl
 #### Make sure that this configuration works with Notes
 
 #### Create S/MIME certs
+
+
+## Calendar and Contacts
+
+This process will build an Apple Calendar and Contacts server on macOS **independent** of any prior Server.app installation. References:
+* CalendarServer's [QuickStart](https://www.calendarserver.org/QuickStart.html) for a working example.
+* [macOS Server Service Migration Guide v1.2](https://developer.apple.com/support/macos-server/macOS-Server-Service-Migration-Guide.pdf)
+* https://github.com/apple/ccs-calendarserver/issues/535#issuecomment-489647731
+* https://gist.github.com/essandess/3136597a587edc9045d8ae7d75e59e0a
+
+### Create the `calendarserver` account, password, install directories
+
+```
+# choose a free uid < 500; uid 350 is used here
+dscl . -list /Users UniqueID | sort -n -k2
+
+sudo bash <<CREATE_SYSTEM_USER
+dscl . -create /Users/calendarserver RealName calendarserver
+dscl . -create /Users/calendarserver NFSHomeDirectory /private/var/calendarserver
+dscl . -create /Users/calendarserver UserShell /bin/bash
+dscl . -create /Users/calendarserver UniqueID 350
+dscl . -create /Users/calendarserver PrimaryGroupID 20
+dscl . -create /Users/calendarserver Password "calendarserver@host.domain.tld's password"
+CREATE_SYSTEM_USER
+
+# /var/calendarserver is calendarserver's $HOME, ~/Library/CalendarServer is ccs-calendarserver's install dir
+sudo bash <<CREATE_CALENDARSERVER_HOME
+mkdir -p /private/var/calendarserver/Library/CalendarServer
+chown -R calendarserver /private/var/calendarserver
+chmod 0750 /private/var/calendarserver
+CREATE_CALENDARSERVER_HOME
+```
+
+Add passwords to the server's keychain and test with the code used by [getPasswordFromKeychain()](https://github.com/apple/ccs-calendarserver/blob/a5b19e00a25f16ff2d56f899228bc6432b8b8828/twistedcaldav/util.py#L230). Change the account `calendarserver`'s password to a strong password and save to the Keychain. Grant access to all services. Note that the "account" in the keychain must be in the form of `calendarserver@host.domain.tld`, which is what the [code](https://github.com/apple/ccs-calendarserver/blob/a5b19e00a25f16ff2d56f899228bc6432b8b8828/twistedcaldav/stdconfig.py#L1760) looks for.
+```
+sudo bash <<ADD_PASSWORD_TO_SYSTEM_KEYCHAIN
+/usr/bin/security add-generic-password -a calendarserver@host.domain.tld -s org.calendarserver -w "calendarserver's password" -A /Library/Keychains/System.keychain
+ADD_PASSWORD_TO_SYSTEM_KEYCHAIN
+
+# test with ccs-calendarserver code
+sudo -u calendarserver /usr/bin/security find-generic-password -a calendarserver -g
+```
+
+### Clone and install `ccs-calendarserver`
+
+Clone the latest from Apple. **Apple working build on 10.14**: Use MacPorts `openssl` as the system `openssl` for the `calendarserver` build, but do **not** use MacPorts Python binaries or libraries. Also, account `calendarserver` will not and should not be a sudoer.
+
+As sudoer:
+```
+sudo sh -x <<INSTALL_DEPENDENCIES
+# macOS-native Python needs the pip module
+/usr/bin/easy_install pip
+
+# MacPorts openssl, virtualenv-2.7, postgresql
+port -pN install openssl py27-virtualenv virtualenv_select py27-pip pip_select postgresql96-server postgresql_select
+port select --set virtualenv virtualenv27
+port select --set postgresql postgresql96
+# in case macOS-native `easy_install pip` breaks in the future, like `easy_install virtualenv` does now
+port -pN install py27-pip pip_select
+port select --set pip pip27
+INSTALL_DEPENDENCIES
+which virtualenv
+```
+
+Build and install `CalendarServer` as the user `calendarserver`:
+```
+sudo -iu calendarserver
+
+mkdir /var/calendarserver/Library/CalendarServer
+echo "source /var/calendarserver/Library/CalendarServer/environment.sh" > ~/.profile
+
+git clone https://github.com/apple/ccs-calendarserver.git
+# git clone -b release/CalendarServer-9.3 https://github.com/apple/ccs-calendarserver.git
+
+cd ccs-calendarserver
+
+# /opt/local is deprecated, but included for openssl, virtualenv
+sh -x <<PACKAGE_CALENDARSERVER
+(
+    export USE_OPENSSL=1  # Don't use SecureTransport
+    export PATH=/usr/bin:/bin:/usr/sbin:/sbin:/opt/local/bin:/opt/local/sbin:/usr/local/bin
+    export C_INCLUDE_PATH=/usr/include:/usr/local/include:/opt/local/include
+    export LD_LIBRARY_PATH=/usr/lib:/usr/local/lib:/opt/local/lib:/opt/local/lib/openssl-1.0
+    export CPPFLAGS='-I/usr/include -I/usr/local/include -I/opt/local/include'
+    export LDFLAGS='-L/usr/lib -L/usr/local/lib -L/opt/local/lib -L/opt/local/lib/openssl-1.0'
+    export DYLD_LIBRARY_PATH=/usr/lib:/usr/local/lib:/opt/local/lib:/opt/local/lib/openssl-1.0
+
+    ./bin/package -F /private/var/calendarserver/Library/CalendarServer 1> ~/ccs-calendarserver.log 2>&1
+)
+PACKAGE_CALENDARSERVER
+```
+
+### Create site-specific directories, configurations, set permissions
+
+As `calendarserver`:
+```
+# Configuration
+mkdir -p /var/calendarserver/Library/CalendarServer/Config
+chgrp _calendar /var/calendarserver/Library/CalendarServer/Config
+chmod 0750 /var/calendarserver/Library/CalendarServer/Config
+
+# Logs
+mkdir -p /var/calendarserver/Library/CalendarServer/logs
+chgrp _calendar /var/calendarserver/Library/CalendarServer/logs
+chmod 0750 /var/calendarserver/Library/CalendarServer/logs
+
+# PostgreSQL
+mkdir -p /var/calendarserver/Library/CalendarServer/Data
+chgrp -R _calendar /var/calendarserver/Library/CalendarServer/Data
+chmod -R 0700 /var/calendarserver/Library/CalendarServer/Data
+
+# calendarserver config file
+vi /var/calendarserver/Library/CalendarServer/Config/calendarserver.plist
+
+# nginx reverse proxy configuration
+mkdir -p /var/calendarserver/Library/CalendarServer/etc
+vi /var/calendarserver/Library/CalendarServer/etc/nginx.conf
+mkdir -p /var/calendarserver/Library/CalendarServer/etc/nginx_root
+vi /var/calendarserver/Library/CalendarServer/etc/nginx_root/default.html  # unused, but nginx root is here
+openssl dhparam -out /var/calendarserver/Library/CalendarServer/etc/dhparam.pem 4096
+
+# Launch daemons
+mkdir -p /var/calendarserver/Library/CalendarServer/Config/LaunchDaemons
+vi /var/calendarserver/Library/CalendarServer/Config/LaunchDaemons/org.calendarserver.calendarserver.plist
+vi /var/calendarserver/Library/CalendarServer/Config/LaunchDaemons/org.calendarserver.nginx_proxy.plist
+
+# ccs-calendarserver's postgres code points to `PSQL = "../postgresql/_root/bin/psql"`
+mkdir -p /var/calendarserver/Library/CalendarServer/postgresql
+ln -s /opt/local /var/calendarserver/Library/CalendarServer/postgresql/_root
+```
+
+As sudoer:
+```
+sudo sh -x <<CALENDARSERVER_SPECIFICS
+mkdir /var/run/caldavd
+chown -R calendarserver:_calendar /var/run/caldavd
+chmod 0770 /var/run/caldavd
+mkdir /var/run/caldavd_requests
+chown -R calendarserver:_calendar /var/run/caldavd_requests
+chmod -R 0770 /var/run/caldavd_requests
+CALENDARSERVER_SPECIFICS
+```
+
+### Launch `caldavd` and its `nginx` reverse proxy
+
+As sudoer:
+```
+sudo sh -x <<LAUNCH_CALENDARSERVER
+install -m 0644 /var/calendarserver/Library/CalendarServer/Config/LaunchDaemons/org.calendarserver.calendarserver.plist /Library/LaunchDaemons
+install -m 0644 /var/calendarserver/Library/CalendarServer/Config/LaunchDaemons/org.calendarserver.nginx_proxy.plist /Library/LaunchDaemons
+
+launchctl load -w /Library/LaunchDaemons/org.calendarserver.calendarserver.plist
+launchctl load -w /Library/LaunchDaemons/org.calendarserver.nginx_proxy.plist
+LAUNCH_CALENDARSERVER
+
+# there should be the right stuff in these places:
+ls -laR /var/run/caldavd /var/run/caldavd /var/run/caldavd_requests /var/calendarserver/Library/CalendarServer/logs
+
+open -a Safari https://host.domain.tld:8443
+```
+
+TODO: APNS
+
