@@ -882,7 +882,7 @@ chgrp _calendar /var/calendarserver/Library/CalendarServer/logs
 chmod 0750 /var/calendarserver/Library/CalendarServer/logs
 
 # PostgreSQL
-mkdir -p /var/calendarserver/Library/CalendarServer/Data
+mkdir -p /var/calendarserver/Library/CalendarServer/Data/Database
 chgrp -R _calendar /var/calendarserver/Library/CalendarServer/Data
 chmod -R 0700 /var/calendarserver/Library/CalendarServer/Data
 
