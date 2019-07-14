@@ -68,11 +68,11 @@ See the repo [macOS OpenVPN Server](https://github.com/essandess/macos-openvpn-s
 
 ## Mail
 
-Work in progress. See [macOS Server Migration Notes](./macOS-Server-Migration-Notes.md). Based on postfix+dovecot+solr+rspamd.
+Work in progress. See [macOS Server Migration Notes](./macOS%20Server%20Migration%20Notes.md#mail). Based on postfix+dovecot+solr+rspamd.
 
 
 ## Calendar and Contacts
 
-Work in progress. See [macOS Server Migration Notes](./macOS-Server-Migration-Notes.md). Based on Apple's
+Work in progress. See [macOS Server Migration Notes](./macOS%20Server%20Migration%20Notes.md#calendar-and-contacts). Based on Apple's
 [ccs-calendarserver](https://github.com/apple/ccs-calendarserver).
 
