@@ -79,7 +79,7 @@ This mail server uses [postfix](http://www.postfix.org/documentation.html) for t
 Surrogate TLS and DKIM configurations are created during the installation; these must be changed prior to
 deployment. The configuration files in this port are a combination of macOS Server version 5.7's Mail server
 setup, with many newer capabilities added. See the individual projects for configuration details, as well as
-online guides, e.g. (mail-server-guide)[https://www.c0ffee.net/blog/mail-server-guide/], and the MacPorts
+online guides, e.g. [mail-server-guide](https://www.c0ffee.net/blog/mail-server-guide/), and the MacPorts
 `mail-server` [Portfile](https://github.com/macports/macports-ports/blob/master/mail/mail-server/Portfile) itself:
 ```
 port notes mail-server
