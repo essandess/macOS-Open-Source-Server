@@ -71,6 +71,8 @@ See the repo [macOS OpenVPN Server](https://github.com/essandess/macos-openvpn-s
 MacPorts provides a basic, working, configurable mail server:
 ```
 sudo port install mail server
+port notes mail-server
+sudo port load mail-server
 ```
 
 This mail server uses [postfix](http://www.postfix.org/documentation.html) for the MTA,
