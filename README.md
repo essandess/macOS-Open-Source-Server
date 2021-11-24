@@ -16,10 +16,10 @@ Mojave.
 Table of Contents
 =================
   * [DNS](#dns)
-  * [VPN](#vpn)
-  * [OpenVPN](#openvpn)
   * [Mail](#mail)
   * [Calendar and Contacts](#calendar-and-contacts)
+  * [VPN](#vpn)
+  * [OpenVPN](#openvpn)
 
 
 ## DNS
@@ -29,7 +29,7 @@ an external IP address on the open internet by the DNS provider of
 your choice, and an internal LAN IP address by the [DNS service](#dns)
 on the server.
 
-```
+```bash
 sudo port install dns-server
 port notes dns-server
 sudo port load bind9
@@ -44,12 +44,30 @@ specifics and preferences by editing the files:
 Refer to the `*.macports` template files and `man named` for details.
 
 
+## Mail
+
+```bash
+sudo port install mail-server
+port notes mail-server
+sudo port load mail-server
+```
+
+
+## Calendar and Contacts
+
+```bash
+sudo port install calendar-contacts-server
+port notes calendar-contacts-server
+sudo port load calendar-contacts-server
+```
+
+
 ## VPN
 
 Configure macOS's native VPN (L2TP-IPSec-PSK) Server. This
 configuration is based upon macOS Server.app's prior VPN server.
 
-```
+```bash
 sudo port install macos-vpn-server
 port notes macos-vpn-server
 sudo port load macos-vpn-server
@@ -64,15 +82,3 @@ See `man 5 vpnd` for details.
 ## OpenVPN
 
 See the repo [macOS OpenVPN Server](https://github.com/essandess/macos-openvpn-server).
-
-
-## Mail
-
-Work in progress. See [macOS Server Migration Notes](./macOS%20Server%20Migration%20Notes.md#mail). Based on postfix+dovecot+solr+rspamd.
-
-
-## Calendar and Contacts
-
-Work in progress. See [macOS Server Migration Notes](./macOS%20Server%20Migration%20Notes.md#calendar-and-contacts). Based on Apple's
-[ccs-calendarserver](https://github.com/apple/ccs-calendarserver).
-
